@@ -38,31 +38,29 @@ margin-left:240px;
 padding:30px;
 }
 
-.card{
-background:#1e293b;
-padding:20px;
-border-radius:10px;
-margin:10px 0;
-}
-
-button{
-padding:15px;
-margin:10px;
-border:none;
-border-radius:8px;
-background:#22c55e;
-color:black;
-font-weight:bold;
-cursor:pointer;
-}
-
 .timer{
-font-size:40px;
+font-size:50px;
 margin:20px 0;
 }
 
-.warning{
-color:#facc15;
+.mode{
+font-size:22px;
+color:#22c55e;
+margin-bottom:20px;
+}
+
+button{
+display:block;
+width:220px;
+padding:15px;
+margin:10px 0;
+border:none;
+border-radius:10px;
+background:#22c55e;
+color:black;
+font-weight:bold;
+font-size:16px;
+cursor:pointer;
 }
 
 </style>
@@ -86,25 +84,8 @@ color:#facc15;
 
 <h1>Driver Dashboard</h1>
 
-<div class="card">
-Driving Today: <span id="drivingToday">0</span> h
-</div>
-
-<div class="card">
-Remaining Driving Today: <span id="remainingDrive">9</span> h
-</div>
-
-<div class="card">
-Driving This Week: <span id="weeklyDrive">0</span> h
-</div>
-
-<div class="card">
-Extensions Used: <span id="extensions">0</span> / 2
-</div>
-
-<div class="card warning">
-Break needed after 4h30 driving
-</div>
+<p>Driving Today: <span id="driveToday">0</span> h</p>
+<p>Break Today: <span id="breakToday">0</span> m</p>
 
 </div>
 
@@ -112,13 +93,17 @@ Break needed after 4h30 driving
 
 <h1>Tachograph Mode</h1>
 
+<div class="mode">
+Current Mode: <span id="modeText">STOP</span>
+</div>
+
 <div class="timer" id="timer">00:00:00</div>
 
-<button onclick="startDriving()">🚛 START DRIVING</button>
-<button onclick="startBreak()">☕ BREAK</button>
-<button onclick="startWork()">🔧 OTHER WORK</button>
-<button onclick="startPOA()">⏳ POA</button>
-<button onclick="stopAll()">🛑 STOP</button>
+<button onclick="setMode('driving')">🚛 START DRIVING</button>
+<button onclick="setMode('break')">☕ BREAK / REST</button>
+<button onclick="setMode('work')">🔧 OTHER WORK</button>
+<button onclick="setMode('poa')">⏳ POA</button>
+<button onclick="setMode('stop')">🛑 STOP</button>
 
 </div>
 
@@ -128,10 +113,9 @@ Break needed after 4h30 driving
 
 let mode="stop"
 
-let seconds=0
+let timer=0
 let driving=0
-let weekly=0
-let extensions=0
+let breakTime=0
 
 function showPage(page){
 
@@ -143,71 +127,45 @@ document.getElementById(page).style.display="block"
 
 }
 
+function setMode(newMode){
+
+mode=newMode
+
+document.getElementById("modeText").innerText=newMode.toUpperCase()
+
+}
+
 setInterval(function(){
 
-seconds++
+if(mode==="stop") return
 
-let h=Math.floor(seconds/3600)
-let m=Math.floor((seconds%3600)/60)
-let s=seconds%60
+timer++
+
+let h=Math.floor(timer/3600)
+let m=Math.floor((timer%3600)/60)
+let s=timer%60
 
 document.getElementById("timer").innerText=
 String(h).padStart(2,"0")+":"+
 String(m).padStart(2,"0")+":"+
 String(s).padStart(2,"0")
 
-if(mode==="driving"){
+if(mode==="driving") driving++
+if(mode==="break") breakTime++
 
-driving++
-weekly++
-
-}
-
-updateStats()
+updateDashboard()
 
 },1000)
 
-function startDriving(){
-mode="driving"
-}
+function updateDashboard(){
 
-function startBreak(){
-mode="break"
-}
+let driveHours=(driving/3600).toFixed(2)
 
-function startWork(){
-mode="work"
-}
+let breakMin=Math.floor(breakTime/60)
 
-function startPOA(){
-mode="poa"
-}
+document.getElementById("driveToday").innerText=driveHours
 
-function stopAll(){
-mode="stop"
-}
-
-function updateStats(){
-
-let drivingHours=(driving/3600)
-
-let weeklyHours=(weekly/3600)
-
-if(drivingHours>9 && extensions<2){
-
-extensions=1
-
-}
-
-let remaining=(9-drivingHours).toFixed(2)
-
-document.getElementById("drivingToday").innerText=drivingHours.toFixed(2)
-
-document.getElementById("remainingDrive").innerText=remaining
-
-document.getElementById("weeklyDrive").innerText=weeklyHours.toFixed(2)
-
-document.getElementById("extensions").innerText=extensions
+document.getElementById("breakToday").innerText=breakMin
 
 }
 
