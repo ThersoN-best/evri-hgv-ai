@@ -71,6 +71,13 @@ margin:10px 0;
 width:220px;
 }
 
+.history{
+background:#111827;
+padding:15px;
+margin:10px 0;
+border-radius:10px;
+}
+
 </style>
 
 </head>
@@ -83,6 +90,7 @@ width:220px;
 
 <div onclick="showPage('dashboard')">Dashboard</div>
 <div onclick="showPage('tachograph')">Driving Hours</div>
+<div onclick="showPage('history')">History</div>
 
 </div>
 
@@ -113,7 +121,7 @@ Extensions Used:
 </div>
 
 <div class="card">
-Break needed after:
+Break after:
 <span id="breakNeed">4h30</span>
 </div>
 
@@ -121,7 +129,7 @@ Break needed after:
 
 <div id="tachograph" class="page" style="display:none">
 
-<h1>Tachograph Mode</h1>
+<h1>Tachograph</h1>
 
 <div class="mode">
 Mode: <span id="modeText">STOP</span>
@@ -131,11 +139,20 @@ Mode: <span id="modeText">STOP</span>
 00:00:00
 </div>
 
-<button onclick="startDriving()">🚛 START DRIVING</button>
+<button onclick="startDriving()">🚛 DRIVING</button>
 <button onclick="startBreak()">☕ BREAK</button>
 <button onclick="startWork()">🔧 OTHER WORK</button>
 <button onclick="startPOA()">⏳ POA</button>
 <button onclick="stopAll()">🛑 STOP</button>
+<button onclick="endShift()">📅 END SHIFT</button>
+
+</div>
+
+<div id="history" class="page" style="display:none">
+
+<h1>Work History</h1>
+
+<div id="historyList"></div>
 
 </div>
 
@@ -147,9 +164,11 @@ let mode="stop"
 
 let timer=0
 let drivingToday=0
-let breakTime=0
 let weekDriving=0
+let breakDriving=0
 let extensions=0
+
+let history = JSON.parse(localStorage.getItem("history") || "[]")
 
 function showPage(page){
 
@@ -158,6 +177,8 @@ let pages=document.querySelectorAll(".page")
 pages.forEach(p=>p.style.display="none")
 
 document.getElementById(page).style.display="block"
+
+renderHistory()
 
 }
 
@@ -172,6 +193,7 @@ function startBreak(){
 
 mode="break"
 document.getElementById("modeText").innerText="BREAK"
+breakDriving=0
 
 }
 
@@ -198,7 +220,7 @@ document.getElementById("modeText").innerText="STOP"
 
 setInterval(function(){
 
-if(mode=="stop") return
+if(mode==="stop") return
 
 timer++
 
@@ -211,11 +233,11 @@ String(h).padStart(2,"0")+":"+
 String(m).padStart(2,"0")+":"+
 String(s).padStart(2,"0")
 
-if(mode=="driving"){
+if(mode==="driving"){
 
 drivingToday++
-
 weekDriving++
+breakDriving++
 
 }
 
@@ -238,6 +260,64 @@ document.getElementById("remainToday").innerText=remain
 document.getElementById("weekDriving").innerText=(weekDriving/3600).toFixed(2)
 
 document.getElementById("extensions").innerText=extensions
+
+if(breakDriving>=16200){
+
+document.getElementById("breakNeed").innerText="BREAK NOW"
+
+}else{
+
+let remainBreak=(16200-breakDriving)/60
+
+document.getElementById("breakNeed").innerText=
+Math.floor(remainBreak)+" min"
+
+}
+
+}
+
+function endShift(){
+
+let date=new Date().toLocaleDateString()
+
+let hours=(drivingToday/3600).toFixed(2)
+
+history.push({
+date:date,
+driving:hours
+})
+
+localStorage.setItem("history",JSON.stringify(history))
+
+drivingToday=0
+timer=0
+breakDriving=0
+
+alert("Shift saved!")
+
+}
+
+function renderHistory(){
+
+let container=document.getElementById("historyList")
+
+container.innerHTML=""
+
+history.reverse().forEach(day=>{
+
+container.innerHTML+=`
+
+<div class="history">
+
+<b>${day.date}</b><br>
+
+Driving: ${day.driving} h
+
+</div>
+
+`
+
+})
 
 }
 
