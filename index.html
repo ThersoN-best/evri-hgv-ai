@@ -61,6 +61,10 @@ font-size:40px;
 margin:20px 0;
 }
 
+.warning{
+color:#facc15;
+}
+
 </style>
 
 </head>
@@ -80,18 +84,26 @@ margin:20px 0;
 
 <div id="dashboard" class="page">
 
-<h1>Dashboard</h1>
+<h1>Driver Dashboard</h1>
 
 <div class="card">
 Driving Today: <span id="drivingToday">0</span> h
 </div>
 
 <div class="card">
-Break Today: <span id="breakToday">0</span> min
+Remaining Driving Today: <span id="remainingDrive">9</span> h
 </div>
 
 <div class="card">
-Remaining Driving Today: <span id="remainingDrive">9</span> h
+Driving This Week: <span id="weeklyDrive">0</span> h
+</div>
+
+<div class="card">
+Extensions Used: <span id="extensions">0</span> / 2
+</div>
+
+<div class="card warning">
+Break needed after 4h30 driving
 </div>
 
 </div>
@@ -103,13 +115,9 @@ Remaining Driving Today: <span id="remainingDrive">9</span> h
 <div class="timer" id="timer">00:00:00</div>
 
 <button onclick="startDriving()">🚛 START DRIVING</button>
-
 <button onclick="startBreak()">☕ BREAK</button>
-
 <button onclick="startWork()">🔧 OTHER WORK</button>
-
 <button onclick="startPOA()">⏳ POA</button>
-
 <button onclick="stopAll()">🛑 STOP</button>
 
 </div>
@@ -119,9 +127,11 @@ Remaining Driving Today: <span id="remainingDrive">9</span> h
 <script>
 
 let mode="stop"
+
 let seconds=0
 let driving=0
-let breakTime=0
+let weekly=0
+let extensions=0
 
 function showPage(page){
 
@@ -147,11 +157,10 @@ String(m).padStart(2,"0")+":"+
 String(s).padStart(2,"0")
 
 if(mode==="driving"){
-driving++
-}
 
-if(mode==="break"){
-breakTime++
+driving++
+weekly++
+
 }
 
 updateStats()
@@ -180,17 +189,25 @@ mode="stop"
 
 function updateStats(){
 
-let drivingHours=(driving/3600).toFixed(2)
+let drivingHours=(driving/3600)
 
-let breakMin=Math.floor(breakTime/60)
+let weeklyHours=(weekly/3600)
+
+if(drivingHours>9 && extensions<2){
+
+extensions=1
+
+}
 
 let remaining=(9-drivingHours).toFixed(2)
 
-document.getElementById("drivingToday").innerText=drivingHours
-
-document.getElementById("breakToday").innerText=breakMin
+document.getElementById("drivingToday").innerText=drivingHours.toFixed(2)
 
 document.getElementById("remainingDrive").innerText=remaining
+
+document.getElementById("weeklyDrive").innerText=weeklyHours.toFixed(2)
+
+document.getElementById("extensions").innerText=extensions
 
 }
 
