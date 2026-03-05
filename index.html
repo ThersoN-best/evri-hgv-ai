@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
@@ -46,7 +47,6 @@ margin:20px 0;
 .mode{
 font-size:22px;
 color:#22c55e;
-margin-bottom:20px;
 }
 
 button{
@@ -63,6 +63,14 @@ font-size:16px;
 cursor:pointer;
 }
 
+.card{
+background:#1e293b;
+padding:20px;
+border-radius:12px;
+margin:10px 0;
+width:220px;
+}
+
 </style>
 
 </head>
@@ -74,7 +82,7 @@ cursor:pointer;
 <h2>EVRi HGV AI</h2>
 
 <div onclick="showPage('dashboard')">Dashboard</div>
-<div onclick="showPage('driving')">Driving Hours</div>
+<div onclick="showPage('tachograph')">Driving Hours</div>
 
 </div>
 
@@ -84,26 +92,50 @@ cursor:pointer;
 
 <h1>Driver Dashboard</h1>
 
-<p>Driving Today: <span id="driveToday">0</span> h</p>
-<p>Break Today: <span id="breakToday">0</span> m</p>
+<div class="card">
+Driving Today:
+<span id="driveToday">0</span> h
+</div>
+
+<div class="card">
+Remaining Today:
+<span id="remainToday">9</span> h
+</div>
+
+<div class="card">
+Driving This Week:
+<span id="weekDriving">0</span> h
+</div>
+
+<div class="card">
+Extensions Used:
+<span id="extensions">0</span> / 2
+</div>
+
+<div class="card">
+Break needed after:
+<span id="breakNeed">4h30</span>
+</div>
 
 </div>
 
-<div id="driving" class="page" style="display:none">
+<div id="tachograph" class="page" style="display:none">
 
 <h1>Tachograph Mode</h1>
 
 <div class="mode">
-Current Mode: <span id="modeText">STOP</span>
+Mode: <span id="modeText">STOP</span>
 </div>
 
-<div class="timer" id="timer">00:00:00</div>
+<div class="timer" id="timer">
+00:00:00
+</div>
 
-<button onclick="setMode('driving')">🚛 START DRIVING</button>
-<button onclick="setMode('break')">☕ BREAK / REST</button>
-<button onclick="setMode('work')">🔧 OTHER WORK</button>
-<button onclick="setMode('poa')">⏳ POA</button>
-<button onclick="setMode('stop')">🛑 STOP</button>
+<button onclick="startDriving()">🚛 START DRIVING</button>
+<button onclick="startBreak()">☕ BREAK</button>
+<button onclick="startWork()">🔧 OTHER WORK</button>
+<button onclick="startPOA()">⏳ POA</button>
+<button onclick="stopAll()">🛑 STOP</button>
 
 </div>
 
@@ -114,8 +146,10 @@ Current Mode: <span id="modeText">STOP</span>
 let mode="stop"
 
 let timer=0
-let driving=0
+let drivingToday=0
 let breakTime=0
+let weekDriving=0
+let extensions=0
 
 function showPage(page){
 
@@ -127,17 +161,44 @@ document.getElementById(page).style.display="block"
 
 }
 
-function setMode(newMode){
+function startDriving(){
 
-mode=newMode
+mode="driving"
+document.getElementById("modeText").innerText="DRIVING"
 
-document.getElementById("modeText").innerText=newMode.toUpperCase()
+}
+
+function startBreak(){
+
+mode="break"
+document.getElementById("modeText").innerText="BREAK"
+
+}
+
+function startWork(){
+
+mode="work"
+document.getElementById("modeText").innerText="OTHER WORK"
+
+}
+
+function startPOA(){
+
+mode="poa"
+document.getElementById("modeText").innerText="POA"
+
+}
+
+function stopAll(){
+
+mode="stop"
+document.getElementById("modeText").innerText="STOP"
 
 }
 
 setInterval(function(){
 
-if(mode==="stop") return
+if(mode=="stop") return
 
 timer++
 
@@ -145,13 +206,18 @@ let h=Math.floor(timer/3600)
 let m=Math.floor((timer%3600)/60)
 let s=timer%60
 
-document.getElementById("timer").innerText=
+document.getElementById("timer").innerText =
 String(h).padStart(2,"0")+":"+
 String(m).padStart(2,"0")+":"+
 String(s).padStart(2,"0")
 
-if(mode==="driving") driving++
-if(mode==="break") breakTime++
+if(mode=="driving"){
+
+drivingToday++
+
+weekDriving++
+
+}
 
 updateDashboard()
 
@@ -159,13 +225,19 @@ updateDashboard()
 
 function updateDashboard(){
 
-let driveHours=(driving/3600).toFixed(2)
-
-let breakMin=Math.floor(breakTime/60)
+let driveHours=(drivingToday/3600).toFixed(2)
 
 document.getElementById("driveToday").innerText=driveHours
 
-document.getElementById("breakToday").innerText=breakMin
+let remain=(9-(drivingToday/3600)).toFixed(2)
+
+if(remain<0) remain=0
+
+document.getElementById("remainToday").innerText=remain
+
+document.getElementById("weekDriving").innerText=(weekDriving/3600).toFixed(2)
+
+document.getElementById("extensions").innerText=extensions
 
 }
 
@@ -174,4 +246,5 @@ showPage("dashboard")
 </script>
 
 </body>
+
 </html>
