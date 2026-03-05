@@ -1,151 +1,64 @@
+<!DOCTYPE html><html>
+<head><title>EVRi HGV AI Dashboard</title><style>
 
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>EVRi HGV AI</title>
-<style>
 body{
-font-family: Arial;
+margin:0;
+font-family:Arial;
 background:#0f172a;
 color:white;
-margin:0;
 }
-header{
+
+.sidebar{
+width:250px;
+height:100vh;
 background:#020617;
+position:fixed;
 padding:20px;
-text-align:center;
 }
-nav{
-background:#1e293b;
-padding:10px;
-text-align:center;
+
+.sidebar h2{
+color:#22c55e;
 }
-nav button{
-margin:5px;
-padding:10px 20px;
-border:none;
-background:#2563eb;
+
+.sidebar a{
+display:block;
 color:white;
-cursor:pointer;
+text-decoration:none;
+margin:15px 0;
+font-size:18px;
 }
-.container{
+
+.main{
+margin-left:250px;
 padding:30px;
 }
-.card-grid{
+
+.cards{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+grid-template-columns:repeat(3,1fr);
 gap:20px;
 margin-top:20px;
 }
+
 .card{
 background:#1e293b;
 padding:30px;
 border-radius:10px;
-text-align:center;
 font-size:18px;
 }
-input{
-padding:10px;
-margin:10px;
-}
-button.action{
-padding:10px 20px;
-background:#22c55e;
-border:none;
-color:white;
-}
-</style>
-</head>
 
-<body>
-
-<header>
-<h1>EVRi HGV AI</h1>
-<p>Driver Assistant Dashboard</p>
-</header>
-
-<nav>
-<button onclick="show('dashboard')">Dashboard</button>
-<button onclick="show('driving')">Driving Hours</button>
-<button onclick="show('parking')">Truck Parking</button>
-<button onclick="show('ai')">AI Assistant</button>
-</nav>
-
-<div class="container">
-
-<div id="dashboard">
-<h2>Dashboard</h2>
-<div class="card-grid">
-<div class="card">Driving Hours</div>
-<div class="card">Truck Navigation</div>
-<div class="card">Truck Parking</div>
-<div class="card">Fuel Finder</div>
-<div class="card">AI Assistant</div>
-<div class="card">Driver Jobs</div>
-</div>
-</div>
-
-<div id="driving" style="display:none">
-<h2>Driving Hours Calculator</h2>
-<input id="hours" placeholder="Hours driven today">
-<button class="action" onclick="calc()">Calculate</button>
-<p id="result"></p>
-</div>
-
-<div id="parking" style="display:none">
-<h2>Truck Parking Locations</h2>
-<ul id="parkingList"></ul>
-</div>
-
-<div id="ai" style="display:none">
-<h2>AI Driver Assistant</h2>
-<input id="question" placeholder="Ask something">
-<button class="action" onclick="ask()">Ask</button>
-<p id="answer"></p>
-</div>
-
-</div>
-
-<script>
-
-function show(section){
-document.querySelectorAll('.container > div').forEach(d=>d.style.display='none');
-document.getElementById(section).style.display='block';
+.header{
+font-size:30px;
+margin-bottom:20px;
 }
 
-function calc(){
-let hours = document.getElementById("hours").value;
-let remaining = 9 - hours;
-document.getElementById("result").innerText =
-"You can drive " + remaining + " hours today";
-}
+</style></head><body><div class="sidebar"><h2>EVRi HGV AI</h2><a href="#">Dashboard</a>
+<a href="#">Driving Hours</a>
+<a href="#">Truck Parking</a>
+<a href="#">Fuel Finder</a>
+<a href="#">AI Assistant</a>
+<a href="#">Driver Jobs</a>
+<a href="#">Vehicle Inspection</a>
+<a href="#">Admin Panel</a>
 
-let parking = [
-"Rugby Truck Stop",
-"Northampton Truck Stop",
-"Birmingham Truck Park",
-"Manchester Truck Stop"
-];
-
-let list=document.getElementById("parkingList");
-parking.forEach(p=>{
-let li=document.createElement("li");
-li.innerText=p;
-list.appendChild(li);
-});
-
-function ask(){
-let q=document.getElementById("question").value.toLowerCase();
-let a="";
-if(q.includes("drive")) a="You can still drive about 3 hours today.";
-else if(q.includes("break")) a="You should take a 45 minute break.";
-else if(q.includes("parking")) a="Opening truck parking section.";
-else a="Try asking about driving hours, breaks or parking.";
-document.getElementById("answer").innerText=a;
-}
-
-</script>
-
-</body>
-</html>
+</div><div class="main"><div class="header">Logistics Dashboard</div><div class="cards"><div class="card">Drivers Online: 12</div><div class="card">Active Jobs: 24</div><div class="card">Vehicles: 18</div><div class="card">Fuel Stations</div><div class="card">Driving Hours Calculator</div><div class="card">AI Assistant</div></div></div></body></html>
