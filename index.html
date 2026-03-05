@@ -96,16 +96,22 @@ Truck Parking Map (coming soon)
 <div class="card">HGV Night Driver</div>
 <div class="card">Amazon Driver</div></div></div></div><script>
 
+<script>
+
 function showPage(page){
 
-let pages=document.querySelectorAll(".page")
+var pages = document.getElementsByClassName("page");
 
-pages.forEach(p=>p.style.display="none")
+for (var i = 0; i < pages.length; i++) {
+pages[i].style.display = "none";
+}
 
-document.getElementById(page).style.display="block"
+document.getElementById(page).style.display = "block";
 
 }
 
-showPage("dashboard")
+window.onload = function(){
+showPage("dashboard");
+}
 
-</script></body></html>
+</script>
