@@ -1,5 +1,5 @@
 <!DOCTYPE html><html>
-<head><title>EVRi HGV AI Dashboard</title><style>
+<head><title>EVRi HGV AI</title><style>
 
 body{
 margin:0;
@@ -25,7 +25,7 @@ display:block;
 color:white;
 text-decoration:none;
 margin:15px 0;
-font-size:18px;
+cursor:pointer;
 }
 
 .main{
@@ -33,32 +33,44 @@ margin-left:250px;
 padding:30px;
 }
 
+.page{
+display:none;
+}
+
 .cards{
 display:grid;
 grid-template-columns:repeat(3,1fr);
 gap:20px;
-margin-top:20px;
 }
 
 .card{
 background:#1e293b;
 padding:30px;
 border-radius:10px;
-font-size:18px;
 }
 
-.header{
-font-size:30px;
-margin-bottom:20px;
+</style></head><body><div class="sidebar"><h2>EVRi HGV AI</h2><a onclick="showPage('dashboard')">Dashboard</a>
+<a onclick="showPage('hours')">Driving Hours</a>
+<a onclick="showPage('parking')">Truck Parking</a>
+<a onclick="showPage('ai')">AI Assistant</a>
+<a onclick="showPage('jobs')">Driver Jobs</a>
+
+</div><div class="main"><div id="dashboard" class="page"><h1>Logistics Dashboard</h1><div class="cards"><div class="card">Drivers Online</div>
+<div class="card">Active Jobs</div>
+<div class="card">Vehicles</div></div></div><div id="hours" class="page"><h1>Driving Hours Calculator</h1><input placeholder="Hours driven today">
+<button>Calculate</button></div><div id="parking" class="page"><h1>Truck Parking</h1><p>Truck parking map will appear here.</p></div><div id="ai" class="page"><h1>AI Driver Assistant</h1><input placeholder="Ask AI">
+<button>Send</button></div><div id="jobs" class="page"><h1>Driver Jobs</h1><p>Available EVRi jobs will appear here.</p></div></div><script>
+
+function showPage(page){
+
+let pages=document.querySelectorAll(".page")
+
+pages.forEach(p=>p.style.display="none")
+
+document.getElementById(page).style.display="block"
+
 }
 
-</style></head><body><div class="sidebar"><h2>EVRi HGV AI</h2><a href="#">Dashboard</a>
-<a href="#">Driving Hours</a>
-<a href="#">Truck Parking</a>
-<a href="#">Fuel Finder</a>
-<a href="#">AI Assistant</a>
-<a href="#">Driver Jobs</a>
-<a href="#">Vehicle Inspection</a>
-<a href="#">Admin Panel</a>
+showPage("dashboard")
 
-</div><div class="main"><div class="header">Logistics Dashboard</div><div class="cards"><div class="card">Drivers Online: 12</div><div class="card">Active Jobs: 24</div><div class="card">Vehicles: 18</div><div class="card">Fuel Stations</div><div class="card">Driving Hours Calculator</div><div class="card">AI Assistant</div></div></div></body></html>
+</script></body></html>
