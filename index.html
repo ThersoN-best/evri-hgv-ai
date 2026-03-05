@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>EVRi HGV AI PRO</title>
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<title>EVRi HGV AI</title>
 
 <style>
 
@@ -15,13 +14,13 @@ margin:0;
 font-family:Arial;
 background:#0f172a;
 color:white;
-display:flex;
 }
 
 .sidebar{
-width:230px;
-background:#020617;
+width:220px;
 height:100vh;
+background:#020617;
+position:fixed;
 padding:20px;
 }
 
@@ -29,24 +28,14 @@ padding:20px;
 color:#22c55e;
 }
 
-.menu div{
-margin:15px 0;
-padding:10px;
+.sidebar div{
+margin:20px 0;
 cursor:pointer;
-border-radius:8px;
-}
-
-.menu div:hover{
-background:#1e293b;
 }
 
 .main{
-flex:1;
+margin-left:240px;
 padding:30px;
-}
-
-.page{
-display:none;
 }
 
 .card{
@@ -56,51 +45,24 @@ border-radius:10px;
 margin:10px 0;
 }
 
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:20px;
-}
-
-input{
-padding:10px;
-border:none;
-border-radius:8px;
-margin-top:10px;
-}
-
 button{
-padding:10px 20px;
-background:#22c55e;
+padding:15px;
+margin:10px;
 border:none;
 border-radius:8px;
-color:white;
+background:#22c55e;
+color:black;
+font-weight:bold;
 cursor:pointer;
-margin-top:10px;
 }
 
-#map{
-height:400px;
-margin-top:20px;
-border-radius:10px;
-}
-
-.chat{
-background:#1e293b;
-padding:15px;
-height:250px;
-overflow:auto;
-border-radius:10px;
-}
-
-.job{
-background:#1e293b;
-padding:20px;
-border-radius:10px;
-margin:10px 0;
+.timer{
+font-size:40px;
+margin:20px 0;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -109,13 +71,8 @@ margin:10px 0;
 
 <h2>EVRi HGV AI</h2>
 
-<div class="menu">
 <div onclick="showPage('dashboard')">Dashboard</div>
-<div onclick="showPage('hours')">Driving Hours</div>
-<div onclick="showPage('parking')">Truck Parking</div>
-<div onclick="showPage('ai')">AI Assistant</div>
-<div onclick="showPage('jobs')">Driver Jobs</div>
-</div>
+<div onclick="showPage('driving')">Driving Hours</div>
 
 </div>
 
@@ -123,70 +80,48 @@ margin:10px 0;
 
 <div id="dashboard" class="page">
 
-<h1>Logistics Dashboard</h1>
+<h1>Dashboard</h1>
 
-<div class="cards">
+<div class="card">
+Driving Today: <span id="drivingToday">0</span> h
+</div>
 
-<div class="card">Drivers Online</div>
-<div class="card">Active Jobs</div>
-<div class="card">Vehicles</div>
-<div class="card">Fuel Stations</div>
+<div class="card">
+Break Today: <span id="breakToday">0</span> min
+</div>
 
+<div class="card">
+Remaining Driving Today: <span id="remainingDrive">9</span> h
 </div>
 
 </div>
 
-<div id="hours" class="page">
+<div id="driving" class="page" style="display:none">
 
-<h1>Driving Hours Calculator</h1>
+<h1>Tachograph Mode</h1>
 
-<input id="hoursInput" placeholder="Hours driven today">
+<div class="timer" id="timer">00:00:00</div>
 
-<br>
+<button onclick="startDriving()">🚛 START DRIVING</button>
 
-<button onclick="calc()">Calculate</button>
+<button onclick="startBreak()">☕ BREAK</button>
 
-<p id="result"></p>
+<button onclick="startWork()">🔧 OTHER WORK</button>
 
-</div>
+<button onclick="startPOA()">⏳ POA</button>
 
-<div id="parking" class="page">
-
-<h1>Truck Parking Map UK</h1>
-
-<div id="map"></div>
-
-</div>
-
-<div id="ai" class="page">
-
-<h1>AI Assistant</h1>
-
-<div class="chat" id="chat"></div>
-
-<input id="q" placeholder="Ask about HGV rules">
-
-<br>
-
-<button onclick="ask()">Send</button>
-
-</div>
-
-<div id="jobs" class="page">
-
-<h1>HGV Driver Jobs</h1>
-
-<div class="job">HGV Class 1 Driver – £20/hour – London</div>
-<div class="job">Tesco Logistics Driver – £19/hour</div>
-<div class="job">Amazon Night Driver – £18/hour</div>
+<button onclick="stopAll()">🛑 STOP</button>
 
 </div>
 
 </div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
+
+let mode="stop"
+let seconds=0
+let driving=0
+let breakTime=0
 
 function showPage(page){
 
@@ -198,39 +133,68 @@ document.getElementById(page).style.display="block"
 
 }
 
-function calc(){
+setInterval(function(){
 
-let h=document.getElementById("hoursInput").value
+seconds++
 
-let remaining=9-h
+let h=Math.floor(seconds/3600)
+let m=Math.floor((seconds%3600)/60)
+let s=seconds%60
 
-document.getElementById("result").innerText=
-"Remaining driving hours: "+remaining
+document.getElementById("timer").innerText=
+String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0")
 
+if(mode==="driving"){
+driving++
 }
 
-function ask(){
+if(mode==="break"){
+breakTime++
+}
 
-let q=document.getElementById("q").value
+updateStats()
 
-let chat=document.getElementById("chat")
+},1000)
 
-chat.innerHTML+="<p><b>You:</b> "+q+"</p>"
+function startDriving(){
+mode="driving"
+}
 
-chat.innerHTML+="<p><b>AI:</b> HGV assistant coming soon.</p>"
+function startBreak(){
+mode="break"
+}
+
+function startWork(){
+mode="work"
+}
+
+function startPOA(){
+mode="poa"
+}
+
+function stopAll(){
+mode="stop"
+}
+
+function updateStats(){
+
+let drivingHours=(driving/3600).toFixed(2)
+
+let breakMin=Math.floor(breakTime/60)
+
+let remaining=(9-drivingHours).toFixed(2)
+
+document.getElementById("drivingToday").innerText=drivingHours
+
+document.getElementById("breakToday").innerText=breakMin
+
+document.getElementById("remainingDrive").innerText=remaining
 
 }
 
 showPage("dashboard")
-
-var map=L.map('map').setView([54,-2],6)
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-maxZoom:19
-}).addTo(map)
-
-L.marker([51.5,-0.1]).addTo(map)
-.bindPopup("London Truck Parking")
 
 </script>
 
