@@ -1,7 +1,5 @@
 <!DOCTYPE html><html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EVRi HGV AI</title><style>
+<head><meta name="viewport" content="width=device-width, initial-scale=1"><title>EVRi HGV AI</title><style>
 
 body{
 margin:0;
@@ -76,8 +74,7 @@ border-radius:6px;
 <button onclick="showPage('ai')">AI Assistant</button>
 <button onclick="showPage('jobs')">Driver Jobs</button>
 
-</div><div class="main"><div id="dashboard" class="page">
-<h1>Logistics Dashboard</h1><div class="card">Drivers Online</div>
+</div><div class="main"><div id="dashboard" class="page"><h1>Logistics Dashboard</h1><div class="card">Drivers Online</div>
 <div class="card">Active Jobs</div>
 <div class="card">Vehicles</div>
 <div class="card">Fuel Stations</div></div><div id="hours" class="page"><h1>Driving Hours Calculator</h1><input id="hoursInput" placeholder="Enter hours"><br><button class="green" onclick="calc()">Calculate</button>
@@ -90,7 +87,7 @@ border-radius:6px;
 
 function showPage(id){
 
-let pages=document.querySelectorAll(".page");
+var pages=document.querySelectorAll(".page");
 
 pages.forEach(function(p){
 p.style.display="none";
@@ -102,7 +99,7 @@ document.getElementById(id).style.display="block";
 
 function calc(){
 
-let h=document.getElementById("hoursInput").value;
+var h=document.getElementById("hoursInput").value;
 
 if(h>9){
 document.getElementById("result").innerHTML="⚠️ Over 9h driving limit";
@@ -115,7 +112,7 @@ document.getElementById("result").innerHTML="✅ Driving time OK";
 
 function ask(){
 
-let q=document.getElementById("question").value;
+var q=document.getElementById("question").value;
 
 document.getElementById("answer").innerHTML="AI response: "+q;
 
