@@ -221,6 +221,62 @@ document.getElementById("remaining").innerText =
 
 },1000)
 
+  let work = 0
+let breakTime = 0
+let poa = 0
+let lastModeTime = Date.now()
+
+function saveModeTime(){
+
+let now = Date.now()
+
+let diff = (now - lastModeTime) / 3600000
+
+if(mode==="DRIVING") driving += diff
+if(mode==="WORK") work += diff
+if(mode==="BREAK") breakTime += diff
+if(mode==="POA") poa += diff
+
+lastModeTime = now
+
+}
+
+function setMode(m){
+
+saveModeTime()
+
+mode = m
+
+}
+
+function endShift(){
+
+saveModeTime()
+
+let history = JSON.parse(localStorage.getItem("history") || "[]")
+
+history.push({
+
+date: new Date().toLocaleDateString(),
+
+driving: driving.toFixed(2),
+work: work.toFixed(2),
+break: breakTime.toFixed(2),
+poa: poa.toFixed(2)
+
+})
+
+localStorage.setItem("history", JSON.stringify(history))
+
+alert("Shift saved!")
+
+driving=0
+work=0
+breakTime=0
+poa=0
+
+}
+
 </script>
 
 </body>
