@@ -139,12 +139,15 @@ Mode: <span id="modeText">STOP</span>
 00:00:00
 </div>
 
-<button onclick="startDriving()">🚛 DRIVING</button>
-<button onclick="startBreak()">☕ BREAK</button>
-<button onclick="startWork()">🔧 OTHER WORK</button>
-<button onclick="startPOA()">⏳ POA</button>
-<button onclick="stopAll()">🛑 STOP</button>
-<button onclick="endShift()">📅 END SHIFT</button>
+<button class="drive" onclick="setMode('DRIVING')">🚛 Driving</button>
+
+<button class="work" onclick="setMode('WORK')">🔧 Work</button>
+
+<button class="break" onclick="setMode('BREAK')">☕ Break</button>
+
+<button class="poa" onclick="setMode('POA')">⏳ POA</button>
+
+<button class="stop" onclick="setMode('STOP')">🛑 Stop</button>
 
 </div>
 
