@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>EVRi HGV AI</title>
@@ -10,18 +11,35 @@
 body{
 margin:0;
 font-family:Arial;
-background:#0f172a;
 color:white;
 display:flex;
+
+background-image:url("https://images.unsplash.com/photo-1601584115197-04ecc0da31d7");
+background-size:cover;
+background-position:center;
+}
+
+/* overlay */
+
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(10,15,30,0.85);
+z-index:-1;
 }
 
 /* sidebar */
 
 .sidebar{
-width:220px;
+width:230px;
 background:#020617;
 padding:20px;
 height:100vh;
+box-shadow:0 0 20px black;
 }
 
 .sidebar h2{
@@ -31,6 +49,7 @@ color:#22c55e;
 .sidebar div{
 margin:15px 0;
 cursor:pointer;
+font-size:18px;
 }
 
 /* main */
@@ -43,22 +62,31 @@ padding:40px;
 /* cards */
 
 .card{
-background:#1e293b;
+background:#1e293bcc;
 padding:20px;
 border-radius:12px;
 margin:10px 0;
+font-size:18px;
+}
+
+/* timer */
+
+.timer{
+font-size:55px;
+margin:30px 0;
 }
 
 /* buttons */
 
 button{
-width:220px;
-padding:15px;
-margin:8px 0;
+width:230px;
+padding:16px;
+margin:10px 0;
 border:none;
-border-radius:10px;
-font-size:16px;
+border-radius:12px;
+font-size:18px;
 cursor:pointer;
+font-weight:bold;
 }
 
 .drive{background:#22c55e;}
@@ -67,9 +95,8 @@ cursor:pointer;
 .poa{background:#a855f7;color:white;}
 .stop{background:#ef4444;color:white;}
 
-.timer{
-font-size:40px;
-margin:20px 0;
+button:hover{
+transform:scale(1.05);
 }
 
 </style>
@@ -90,35 +117,51 @@ margin:20px 0;
 
 <div class="main">
 
+<!-- DASHBOARD -->
+
 <div id="dashboard">
 
 <h1>Driver Dashboard</h1>
 
-<div class="card">Driving Today: <span id="drivingToday">0</span> h</div>
-<div class="card">Remaining Today: <span id="remaining">9</span> h</div>
-<div class="card">Driving This Week: <span id="week">0</span> h</div>
+<div class="card">
+Driving Today:
+<span id="drivingToday">0</span> h
+</div>
+
+<div class="card">
+Remaining Today:
+<span id="remaining">9</span> h
+</div>
 
 </div>
 
+<!-- DRIVING -->
 
 <div id="driving" style="display:none">
 
-<h1>Tachograph Mode</h1>
+<h1>Tachograph</h1>
 
-<div class="timer" id="timer">00:00:00</div>
+<div class="timer" id="timer">
+00:00:00
+</div>
 
 <button class="drive" onclick="setMode('DRIVING')">🚛 Driving</button>
+
 <button class="work" onclick="setMode('WORK')">🔧 Work</button>
+
 <button class="break" onclick="setMode('BREAK')">☕ Break</button>
+
 <button class="poa" onclick="setMode('POA')">⏳ POA</button>
+
 <button class="stop" onclick="setMode('STOP')">🛑 Stop</button>
 
 </div>
 
+<!-- HISTORY -->
 
 <div id="history" style="display:none">
 
-<h1>Work History</h1>
+<h1>History</h1>
 
 <div id="historyList"></div>
 
@@ -129,7 +172,7 @@ margin:20px 0;
 <script>
 
 let mode="STOP"
-let start=null
+let startTime=null
 let driving=0
 
 function showPage(page){
@@ -145,33 +188,33 @@ document.getElementById(page).style.display="block"
 function setMode(m){
 
 mode=m
-start=Date.now()
+startTime=Date.now()
 
 }
 
 setInterval(()=>{
 
-if(start==null)return
+if(startTime==null)return
 
-let diff=(Date.now()-start)/1000
+let diff=(Date.now()-startTime)/1000
 
 let h=Math.floor(diff/3600)
-let m=Math.floor(diff%3600/60)
+let m=Math.floor((diff%3600)/60)
 let s=Math.floor(diff%60)
 
-document.getElementById("timer").innerText=
-String(h).padStart(2,"0")+":"+
-String(m).padStart(2,"0")+":"+
-String(s).padStart(2,"0")
+document.getElementById("timer").innerText =
+String(h).padStart(2,'0')+":"+
+String(m).padStart(2,'0')+":"+
+String(s).padStart(2,'0')
 
 if(mode==="DRIVING"){
 
-driving=diff/3600
+driving = diff/3600
 
-document.getElementById("drivingToday").innerText=
+document.getElementById("drivingToday").innerText =
 driving.toFixed(2)
 
-document.getElementById("remaining").innerText=
+document.getElementById("remaining").innerText =
 (9-driving).toFixed(2)
 
 }
